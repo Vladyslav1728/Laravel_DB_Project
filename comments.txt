@@ -7,9 +7,11 @@ php artisan install:api
 
 --- DATABASE ---
 php artisan make:migration create_NAME_table
-php artisan make:seeder NameSeeder
 php artisan migrate
 php artisan migrate:rollback
 php artisan migrate:fresh
+
+php artisan make:seeder NameSeeder
+php artisan db:seed
 
 */
