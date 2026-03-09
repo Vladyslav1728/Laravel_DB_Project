@@ -1,0 +1,14 @@
+/*
+
+C:\xampp\php\php.exe artisan serve
+
+--- API ---
+php artisan install:api
+
+--- DATABASE ---
+php artisan make:migration create_NAME_table
+php artisan migrate
+php artisan migrate:rollback
+php artisan migrate:fresh
+
+*/
