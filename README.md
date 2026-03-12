@@ -27,3 +27,11 @@
 ```ONE CUSTOM METHOD (MY)```
 
 ![my_custom.png](images/my_custom/my_custom.png)
+
+```CRUD CATEGORIES```
+
+![1.png](images/categories_crud/1.png)
+![2.png](images/categories_crud/2.png)
+![3.png](images/categories_crud/3.png)
+![4.png](images/categories_crud/4.png)
+![5.png](images/categories_crud/5.png)

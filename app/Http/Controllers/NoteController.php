@@ -3,7 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Note;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
 
 class NoteController extends Controller
 {
@@ -12,74 +13,164 @@ class NoteController extends Controller
      */
     public function index()
     {
-        return Note::all();
+        $notes = DB::table('notes')
+            ->whereNull('deleted_at')
+            ->orderBy('updated_at', 'desc')
+            ->get();
+        return response()->json(['notes' => $notes], Response::HTTP_OK);
     }
-
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
-        return Note::create($request->all());
-    }
+        DB::table('notes')->insert([
+            'user_id' => $request->user_id,
+            'title' => $request->title,
+            'body' => $request->body,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
 
+        return response()->json([
+            'message' => 'Poznámka bola úspešne vytvorená.'
+        ], Response::HTTP_CREATED);
+    }
     /**
      * Display the specified resource.
      */
     public function show(string $id)
     {
-        return Note::findOrFail($id);
-    }
+        $note = DB::table('notes')
+            ->whereNull('deleted_at')
+            ->where('id', $id)
+            ->first();
 
+        if (!$note) {
+            return response()->json([
+                'message' => 'Poznámka nenájdená.'
+            ], Response::HTTP_NOT_FOUND);
+        }
+
+        return response()->json([
+            'note' => $note
+        ], Response::HTTP_OK);
+    }
     /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, string $id)
     {
-        $note = Note::findOrFail($id);
-        $note->update($request->all());
-        return $note;
+        $note = DB::table('notes')->where('id', $id)->first();
+
+        if (!$note) {
+            return response()->json([
+                'message' => 'Poznámka nenájdená.'
+            ], Response::HTTP_NOT_FOUND);
+        }
+
+        DB::table('notes')->where('id', $id)->update([
+            'title' => $request->title,
+            'body' => $request->body,
+            'updated_at' => now(),
+        ]);
+
+        return response()->json([
+            'message' => 'Poznámka bola úspešne aktualizovaná.'
+        ], Response::HTTP_OK);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
-    {
-        $note = Note::findOrFail($id);
-        $note->delete();
-        return response()->json(['message' => 'Note deleted']);
-    }
 
-    // GET /api/notes/stats/status
+    public function destroy(string $id) // toto je soft delete
+    {
+        $note = DB::table('notes')
+            ->whereNull('deleted_at')
+            ->where('id', $id)
+            ->first();
+
+        if (!$note) {
+            return response()->json(['message' => 'Poznámka nenájdená.'], Response::HTTP_NOT_FOUND);
+        }
+
+        DB::table('notes')->where('id', $id)->update([
+            'deleted_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+//        DB::table('notes')->where('id', $id)->delete();
+
+        return response()->json(['message' => 'Poznámka bola úspešne odstránená.'], Response::HTTP_OK);
+    }
     public function statsByStatus()
     {
-        return ['total_notes' => Note::count()];
+        $stats = DB::table('notes')
+            ->select('status', DB::raw('COUNT(*) as count'))
+            ->groupBy('status')
+            ->get();
+
+        return response()->json([
+            'stats' => $stats
+        ]);
     }
-
-
-    // PATCH /api/notes/actions/archive-old-drafts
     public function archiveOldDrafts()
     {
-        return response()->json(['message' => 'Old drafts archived (example)']);
-    }
+        $affected = DB::table('notes')
+            ->where('status', 'draft')
+            ->where('updated_at', '<', now()->subDays(30))
+            ->update([
+                'status' => 'archived',
+                'updated_at' => now(),
+            ]);
 
-    // GET /api/users/{user}/notes
-    public function userNotesWithCategories($user)
+        return response()->json([
+            'message' => 'Staré koncepty boli archivované.',
+            'affected_rows' => $affected
+        ]);
+    }
+    public function userNotesWithCategories(string $userId)
     {
-        return Note::where('user_id', $user)->get();
-    }
+        $notes = DB::table('notes')
+            ->join('note_category', 'notes.id', '=', 'note_category.note_id')
+            ->join('categories', 'note_category.category_id', '=', 'categories.id')
+            ->where('notes.user_id', $userId)
+            ->orderBy('notes.updated_at', 'desc')
+            ->select('notes.id', 'notes.title', 'categories.name as category')
+            ->get();
 
-    // GET /api/notes-actions/search?q=text
+        return response()->json([
+            'notes' => $notes
+        ]);
+    }
     public function search(Request $request)
     {
-        $query = strtolower($request->q);
-        return Note::whereRaw('LOWER(title) like ?', ["%{$query}%"])->get();
-    }
+        $q = trim((string) $request->query('q', ''));
 
-    // GET /api/notes/pinned
+        $notes = DB::table('notes')
+            ->whereNull('deleted_at')
+            ->where('status', 'published')
+            ->where(function ($x) use ($q) {
+                $x->where('title', 'like', "%{$q}%")
+                    ->orWhere('body', 'like', "%{$q}%");
+            })
+            ->orderBy('updated_at', 'desc')
+            ->limit(20)
+            ->get();
+
+        return response()->json([
+            'query' => $q,
+            'notes' => $notes,
+        ], Response::HTTP_OK);
+    }
     public function pinnedNotes()
     {
-        return Note::where('is_pinned', 1)->get();
+        $notes = DB::table('notes')
+            ->where('is_pinned', 1)
+            ->whereNull('deleted_at')
+            ->get();
+
+        return response()->json(['notes' => $notes], Response::HTTP_OK);
     }
 }
