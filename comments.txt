@@ -14,13 +14,14 @@ php artisan install:api
 
 --- DATABASE ---
 php artisan make:migration create_NAME_table
-php artisan migrate
-php artisan migrate:rollback
-php artisan migrate:fresh
+
+php artisan migrate                 -> load
+php artisan db:seed                 -> add
+php artisan migrate:rollback        -> back 1 step
+php artisan migrate:fresh           -> delete
+php artisan migrate:fresh --seed    -> delete+add
 
 php artisan make:seeder NameSeeder
-php artisan db:seed -> add
-php artisan migrate:fresh --seed -> delete+add
 
 --- CONTROLLER ---
 php artisan make:controller NameController --api

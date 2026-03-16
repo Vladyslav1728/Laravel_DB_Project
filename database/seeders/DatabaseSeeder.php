@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
+// use App\Models\Category;
+
 class DatabaseSeeder extends Seeder {
     use WithoutModelEvents;
     public function run(): void {
@@ -22,9 +24,11 @@ class DatabaseSeeder extends Seeder {
 
         $this->call([
             UserSeeder::class,
-            CategorySeeder::class,
+            CategorYSeeder::class,
             NoteSeeder::class,
             NoteCategorySeeder::class,
         ]);
+
+        // Category::factory()->count(10)->create();
     }
 }
