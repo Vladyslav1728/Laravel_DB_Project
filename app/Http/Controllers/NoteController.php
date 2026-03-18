@@ -292,4 +292,48 @@ class NoteController extends Controller
 
         return response()->json(['notes' => $notes], Response::HTTP_OK);
     }
+
+    // PATCH /api/notes/{id}/pin
+    public function pin(string $id)
+    {
+        $note = Note::find($id);
+        if (!$note) {
+            return response()->json(['message' => 'Poznamka nenajdena.'], 404);
+        }
+        $note->pin();
+        return response()->json(['note' => $note, 'message' => 'Poznamka pripnuta'], 200);
+    }
+
+    // PATCH /api/notes/{id}/unpin
+    public function unpin(string $id)
+    {
+        $note = Note::find($id);
+        if (!$note) {
+            return response()->json(['message' => 'Poznamka nenajdena.'], 404);
+        }
+        $note->unpin();
+        return response()->json(['note' => $note, 'message' => 'Poznamka odopnuta'], 200);
+    }
+
+    // PATCH /api/notes/{id}/publish
+    public function publish(string $id)
+    {
+        $note = Note::find($id);
+        if (!$note) {
+            return response()->json(['message' => 'Poznamka nenajdena.'], 404);
+        }
+        $note->publish();
+        return response()->json(['note' => $note, 'message' => 'Poznamka publikovana'], 200);
+    }
+
+    // PATCH /api/notes/{id}/archive
+    public function archive(string $id)
+    {
+        $note = Note::find($id);
+        if (!$note) {
+            return response()->json(['message' => 'Poznamka nenajdena.'], 404);
+        }
+        $note->archive();
+        return response()->json(['note' => $note, 'message' => 'Poznamka archivovana'], 200);
+    }
 }

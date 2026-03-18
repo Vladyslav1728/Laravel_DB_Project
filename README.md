@@ -7,6 +7,17 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
+## Images (Cvicenie 5) - Eloquent ORM / QB
+
+New methods are created that are then used in the NoteController
+
+```pin, unpin, publish, archive```
+
+![1.png](images/note_methods/1.png)
+![2.png](images/note_methods/2.png)
+![3.png](images/note_methods/3.png)
+![4.png](images/note_methods/4.png)
+
 ## Images (Cvicenie 4)
 
 ```CRUD```

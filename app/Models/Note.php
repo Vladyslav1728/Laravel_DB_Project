@@ -55,4 +55,17 @@ class Note extends Model
             ->limit($limit)
             ->get();
     }
+
+    // NEW METHODS
+    public function pin(): bool
+    {
+        $this->is_pinned = true;
+        return $this->save();
+    }
+
+    public function unpin(): bool
+    {
+        $this->is_pinned = false;
+        return $this->save();
+    }
 }
