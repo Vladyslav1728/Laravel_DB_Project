@@ -16,7 +16,7 @@ php artisan install:api
 php artisan make:migration create_NAME_table
 
 php artisan migrate                 -> load
-php artisan db:seed                 -> add
+php artisan db:seed                 -> start add seeder
 php artisan migrate:rollback        -> back 1 step
 php artisan migrate:fresh           -> delete
 php artisan migrate:fresh --seed    -> delete+add
