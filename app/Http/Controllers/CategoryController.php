@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Models\Category;
 
 class CategoryController extends Controller
 {
@@ -12,7 +13,7 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $categories = DB::table('categories')->get();
+        $categories = Category::all();
         return response()->json(['categories' => $categories], 200);
     }
 
@@ -21,13 +22,10 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        $id = DB::table('categories')->insertGetId([
-            'name' => $request->name,
-            'created_at' => now(),
-            'updated_at' => now(),
+        $category = Category::create([
+            'name' => $request->name
         ]);
 
-        $category = DB::table('categories')->where('id', $id)->first();
         return response()->json(['category' => $category], 201);
     }
 
@@ -36,7 +34,7 @@ class CategoryController extends Controller
      */
     public function show(string $id)
     {
-        $category = DB::table('categories')->where('id', $id)->first();
+        $category = Category::find($id);
         if (!$category) {
             return response()->json(['message' => 'Category not found'], 404);
         }
@@ -48,12 +46,11 @@ class CategoryController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        DB::table('categories')->where('id', $id)->update([
-            'name' => $request->name,
-            'updated_at' => now(),
-        ]);
-
-        $category = DB::table('categories')->where('id', $id)->first();
+        $category = Category::find($id);
+        if (!$category) {
+            return response()->json(['message' => 'Category not found'], 404);
+        }
+        $category->update(['name' => $request->name]);
         return response()->json(['category' => $category], 200);
     }
 
@@ -62,7 +59,11 @@ class CategoryController extends Controller
      */
     public function destroy(string $id)
     {
-        DB::table('categories')->where('id', $id)->delete();
+        $category = Category::find($id);
+        if (!$category) {
+            return response()->json(['message' => 'Category not found'], 404);
+        }
+        $category->delete();
         return response()->json(['message' => 'Category deleted'], 200);
     }
 }
