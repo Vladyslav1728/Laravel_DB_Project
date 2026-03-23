@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
+
 use App\Models\Note;
 
 class NoteController extends Controller
@@ -39,22 +41,7 @@ class NoteController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    /* --OLD--
-    public function store(Request $request)
-    {
-        DB::table('notes')->insert([
-            'user_id' => $request->user_id,
-            'title' => $request->title,
-            'body' => $request->body,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
-        return response()->json([
-            'message' => 'Poznámka bola úspešne vytvorená.'
-        ], Response::HTTP_CREATED);
-    }
-    */
+    /* -- OLD --
     public function store(Request $request)
     {
         $note = Note::create([
@@ -66,6 +53,54 @@ class NoteController extends Controller
             'message' => 'Poznámka bola úspešne vytvorená.',
             'note' => $note,
         ], Response::HTTP_CREATED);
+    }
+    */
+    public function store(Request $request)
+    {
+        try {
+            $validated = $request->validate([
+                'user_id' => ['required', 'integer', 'exists:users,id'],
+                'title' => ['required', 'string', 'min:3', 'max:255'],
+                'body'  => ['nullable', 'string'],
+                'status' => ['sometimes', 'required', 'string', Rule::in(['draft', 'published', 'archived'])],
+                'is_pinned' => ['sometimes', 'boolean'],
+                'categories' => ['sometimes', 'array', 'max:3'],
+                'categories.*' => ['integer', 'distinct', 'exists:categories,id'],
+            ]);
+
+            $note = Note::create([
+                'user_id'   => $validated['user_id'],
+                'title'     => $validated['title'],
+                'body'      => $validated['body'] ?? null,
+                'status'    => $validated['status'] ?? 'draft',
+                'is_pinned' => $validated['is_pinned'] ?? false,
+            ]);
+
+            if (!empty($validated['categories'])) {
+                $note->categories()->sync($validated['categories']);
+            }
+
+            return response()->json([
+                'message' => 'Poznámka bola úspešne vytvorená.',
+                'note' => $note->load([
+                    'user:id,name',
+                    'categories:id,name,color',
+                ]),
+            ], Response::HTTP_CREATED);
+
+        } catch (\Illuminate\Validation\ValidationException $ve) {
+            // Возврат ошибок валидации
+            return response()->json([
+                'message' => 'Ошибка валидации',
+                'errors' => $ve->errors(),
+            ], 422);
+        } catch (\Exception $e) {
+            // Любые другие ошибки
+            return response()->json([
+                'message' => 'Произошла ошибка на сервере',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
     /**
      * Display the specified resource.
@@ -105,27 +140,6 @@ class NoteController extends Controller
     /* --OLD--
     public function update(Request $request, string $id)
     {
-        $note = DB::table('notes')->where('id', $id)->first();
-
-        if (!$note) {
-            return response()->json([
-                'message' => 'Poznámka nenájdená.'
-            ], Response::HTTP_NOT_FOUND);
-        }
-
-        DB::table('notes')->where('id', $id)->update([
-            'title' => $request->title,
-            'body' => $request->body,
-            'updated_at' => now(),
-        ]);
-
-        return response()->json([
-            'message' => 'Poznámka bola úspešne aktualizovaná.'
-        ], Response::HTTP_OK);
-    }
-    */
-    public function update(Request $request, string $id)
-    {
         $note = Note::find($id);
         if (!$note) {
             return response()->json(['message' => 'Poznámka nenájdená.'], Response::HTTP_NOT_FOUND);
@@ -136,7 +150,56 @@ class NoteController extends Controller
         ]);
         return response()->json(['note' => $note], Response::HTTP_OK);
     }
+    */
+    public function update(Request $request, string $id)
+    {
+        try {
+            $note = Note::find($id);
 
+            if (!$note) {
+                return response()->json(
+                    ['message' => 'Poznámka nenájdená.'],
+                    Response::HTTP_NOT_FOUND
+                );
+            }
+
+            $validated = $request->validate([
+                'title' => ['required', 'string', 'max:255'],
+                'body'  => ['nullable', 'string'],
+                'status' => ['sometimes', 'required', 'string', Rule::in(['draft', 'published', 'archived'])],
+                'is_pinned' => ['sometimes', 'boolean'],
+                'categories' => ['sometimes', 'array'],
+                'categories.*' => ['integer', 'distinct', 'exists:categories,id'],
+            ]);
+
+            // обновляем только валидированные поля
+            $note->update($validated);
+
+            // синхронизируем связи с категориями, если переданы
+            if (array_key_exists('categories', $validated)) {
+                $note->categories()->sync($validated['categories']);
+            }
+
+            return response()->json([
+                'message' => 'Poznámka bola aktualizovaná.',
+                'note' => $note->load([
+                    'user:id,name',
+                    'categories:id,name,color',
+                ]),
+            ], Response::HTTP_OK);
+
+        } catch (\Illuminate\Validation\ValidationException $ve) {
+            return response()->json([
+                'message' => 'Ошибка валидации',
+                'errors' => $ve->errors(),
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Произошла ошибка на сервере',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
     /**
      * Remove the specified resource from storage.
      */
