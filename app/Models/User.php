@@ -8,6 +8,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class User extends Authenticatable
 {
@@ -40,10 +44,19 @@ class User extends Authenticatable
         'premium_until' => 'datetime',
     ];
 
+    protected function casts(): array
+    {
+        return [
+            'email_verified_at' => 'datetime',
+            'premium_until' => 'datetime',
+            'password' => 'hashed',
+        ];
+    }
+
     public const ROLE_ADMIN = 'admin';
     public const ROLE_USER = 'user';
 
-    public function notes()
+    public function notes(): HasMany
     {
         return $this->hasMany(Note::class);
     }
@@ -56,5 +69,10 @@ class User extends Authenticatable
     public function scopeAdmins(Builder $query)
     {
         return $query->where('role', self::ROLE_ADMIN);
+    }
+
+    public function comments(): HasMany
+    {
+        return $this->hasMany(Comment::class);
     }
 }

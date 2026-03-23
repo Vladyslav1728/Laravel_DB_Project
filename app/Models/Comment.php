@@ -17,4 +17,8 @@ class Comment extends Model
     ];
 
     // tu budú relácie
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
 }

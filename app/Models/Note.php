@@ -6,6 +6,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class Note extends Model
 {
@@ -28,6 +32,11 @@ class Note extends Model
     protected $casts = [
         'is_pinned' => 'boolean',
     ];
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
 
     public function publish(): bool
     {
@@ -76,5 +85,15 @@ class Note extends Model
             ->orderByDesc('updated_at')
             ->limit($limit)
             ->get();
+    }
+
+    public function categories(): BelongsToMany
+    {
+        return $this->belongsToMany(Category::class, 'note_category')->withTimestamps();
+    }
+
+    public function tasks(): HasMany
+    {
+        return $this->hasMany(Task::class);
     }
 }

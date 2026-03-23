@@ -24,6 +24,9 @@ class Task extends Model
         'due_at' => 'datetime',
     ];
 
-
     // tu budú relácie
+    public function note(): BelongsTo
+    {
+        return $this->belongsTo(Note::class);
+    }
 }
