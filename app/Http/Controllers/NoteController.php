@@ -126,10 +126,18 @@ class NoteController extends Controller
     */
     public function show(string $id)
     {
-        $note = Note::find($id);
+        $note = Note::with([
+            'user:id,name',
+            'categories:id,name',
+            'tasks',
+            'tasks.comments',
+            'comments'
+        ])->find($id);
 
         if (!$note) {
-            return response()->json(['message' => 'Poznámka nenájdená.'], Response::HTTP_NOT_FOUND);
+            return response()->json([
+                'message' => 'Poznámka nenájdená.'
+            ], Response::HTTP_NOT_FOUND);
         }
 
         return response()->json(['note' => $note], Response::HTTP_OK);
