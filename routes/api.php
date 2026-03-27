@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\NoteController;
+use App\Http\Controllers\TaskController;
 use App\Http\Controllers\CategoryController;
 
 // My Custom
@@ -16,6 +17,14 @@ Route::get('notes/stats/status', [NoteController::class, 'statsByStatus']);
 Route::patch('notes/actions/archive-old-drafts', [NoteController::class, 'archiveOldDrafts']);
 Route::get('users/{user}/notes', [NoteController::class, 'userNotesWithCategories']);
 Route::get('notes-actions/search', [NoteController::class, 'search']);
+// Tasks - CRUD
+Route::prefix('notes/{note}')->group(function () {
+    Route::get('tasks', [TaskController::class, 'index']);
+    Route::post('tasks', [TaskController::class, 'store']);
+    Route::get('tasks/{task}', [TaskController::class, 'show']);
+    Route::put('tasks/{task}', [TaskController::class, 'update']);
+    Route::delete('tasks/{task}', [TaskController::class, 'destroy']);
+});
 // New Note Methods - Homework 5
 Route::patch('notes/{id}/pin', [NoteController::class, 'pin']);
 Route::patch('notes/{id}/unpin', [NoteController::class, 'unpin']);
