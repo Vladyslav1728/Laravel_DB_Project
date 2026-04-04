@@ -26,6 +26,18 @@ The method was tested in Postman:
 ![3.png](images/auth/3.png)
 ![4.png](images/auth/4.png)
 
+```Task 2: AuthController Test - New methods```
+
+• POST /api/auth/logout-all
+
+• POST /api/auth/change-password
+
+• PATCH /api/auth/update-profile
+
+![5.png](images/auth/5.png)
+![6.png](images/auth/6.png)
+![7.png](images/auth/7.png)
+
 ## Images (Cvicenie 6) - Connections and Factories
 
 ```Task 1: NoteController CRUD``` 

@@ -72,4 +72,54 @@ class AuthController extends Controller
             'message' => 'Odhlásenie prebehlo úspešne.',
         ], Response::HTTP_OK);
     }
+    public function logoutAll(Request $request)
+    {
+        $request->user()->tokens()->delete();
+
+        return response()->json([
+            'message' => 'Odhlásenie zo všetkých zariadení prebehlo úspešne.',
+        ], Response::HTTP_OK);
+    }
+    public function changePassword(Request $request)
+    {
+        $validated = $request->validate([
+            'current_password' => ['required', 'string'],
+            'new_password' => ['required', 'confirmed', Password::min(12)
+                ->letters()
+                ->mixedCase()
+                ->numbers()
+                ->symbols()],
+        ]);
+
+        $user = $request->user();
+
+        if (!Hash::check($validated['current_password'], $user->password)) {
+            return response()->json([
+                'message' => 'Aktuálne heslo je nesprávne.',
+            ], Response::HTTP_UNAUTHORIZED);
+        }
+
+        $user->password = $validated['new_password'];
+        $user->save();
+
+        return response()->json([
+            'message' => 'Heslo bolo úspešne zmenené.',
+        ], Response::HTTP_OK);
+    }
+    public function updateProfile(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => ['sometimes', 'string', 'min:2', 'max:128'],
+            'role' => ['sometimes', 'in:user,admin'],
+            'premium_until' => ['sometimes', 'date', 'nullable'],
+        ]);
+
+        $user = $request->user();
+        $user->update($validated);
+
+        return response()->json([
+            'message' => 'Profil bol úspešne aktualizovaný.',
+            'user'    => $user,
+        ], Response::HTTP_OK);
+    }
 }
