@@ -44,3 +44,13 @@ Route::prefix('auth')->group(function () {
         Route::patch('/update-profile', [AuthController::class, 'updateProfile']);
     });
 });
+// Admin
+Route::middleware('auth:sanctum')->group(function () {
+    // všetci prihlásení môžu čítať kategórie
+    Route::apiResource('categories', CategoryController::class)->only(['index', 'show']);
+
+    // iba admin môže vytvárať, upravovať, mazať kategórie
+    Route::middleware('admin')->group(function () {
+        Route::apiResource('categories', CategoryController::class)->except(['index', 'show']);
+    });
+});

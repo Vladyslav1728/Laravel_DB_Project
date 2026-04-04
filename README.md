@@ -28,6 +28,8 @@ The method was tested in Postman:
 
 ```Task 2: AuthController Test - New methods```
 
+The method was tested in Postman:
+
 • POST /api/auth/logout-all
 
 • POST /api/auth/change-password
@@ -37,6 +39,13 @@ The method was tested in Postman:
 ![5.png](images/auth/5.png)
 ![6.png](images/auth/6.png)
 ![7.png](images/auth/7.png)
+
+```Task 3: Middleware - For Admin```
+
+Here I showed that after I changed my role to a regular ```User```, I ```can't delete the category```.
+
+![8.png](images/auth/8.png)
+![9.png](images/auth/9.png)
 
 ## Images (Cvicenie 6) - Connections and Factories
 
