@@ -186,4 +186,24 @@ class AuthController extends Controller
             'profile_photo_url' => $newPhoto->publicUrl(),
         ], Response::HTTP_CREATED);
     }
+
+    public function destroyProfilePhoto(Request $request)
+    {
+        $attachment = $request->user()->profilePhoto;
+
+        if (!$attachment) {
+            return response()->json([
+                'message' => 'Profilová fotka neexistuje.',
+            ], Response::HTTP_NOT_FOUND);
+        }
+
+        DB::transaction(function () use ($attachment) {
+            Storage::disk($attachment->disk)->delete($attachment->path);
+            $attachment->delete();
+        });
+
+        return response()->json([
+            'message' => 'Profilová fotka bola odstránená.',
+        ], Response::HTTP_OK);
+    }
 }

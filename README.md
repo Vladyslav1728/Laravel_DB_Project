@@ -31,13 +31,16 @@ The method was tested in Postman:
 ![4.png](images/comments/4.png)
 ![5.png](images/comments/5.png)
 
-```Task 3: AuthController - Photo```
+```Task 3: AuthController - Photo / Files / Links```
 
 The method was tested in Postman:
 
 • POST /api/auth/me/profile-photo - ```ADD PHOTO```
 
-![1.png](images/upload_profile_photo/1.png)
+• POST /api/notes/{note}/attachments - ```ADD FILES```
+
+![1.png](images/upload_files/1.png)
+![2.png](images/upload_files/2.png)
 
 ## Images (Cvicenie 7) - Sanctum
 

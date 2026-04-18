@@ -1,0 +1,76 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Attachment;
+use App\Models\Note;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use Illuminate\Validation\Rules\File;
+use Throwable;
+
+class AttachmentController extends Controller
+{
+    public function store(Request $request, Note $note)
+    {
+        $validated = $request->validate([
+            'files' => ['required', 'array', 'min:1', 'max:10'],
+            'files.*' => [
+                'required',
+                File::types(['pdf', 'jpg', 'jpeg', 'png'])->max('5mb')
+            ],
+        ]);
+
+        $disk = 'local';
+        $created = [];
+        $storedPaths = [];
+
+        try {
+            DB::beginTransaction();
+
+            foreach ($validated['files'] as $file) {
+
+                $directory = 'attachments/notes/' . $note->id . '/' . now()->format('Y/m');
+
+                $path = $file->store($directory, $disk);
+
+                $storedPaths[] = $path;
+
+                $created[] = $note->attachments()->create([
+                    'public_id' => (string) Str::ulid(),
+                    'collection' => 'attachment',
+                    'visibility' => 'private',
+                    'disk' => $disk,
+                    'path' => $path,
+                    'stored_name' => basename($path),
+                    'original_name' => $file->getClientOriginalName(),
+                    'mime_type' => $file->getMimeType(),
+                    'size' => $file->getSize(),
+                ]);
+            }
+
+            DB::commit();
+
+        } catch (Throwable $e) {
+
+            DB::rollBack();
+
+            foreach ($storedPaths as $path) {
+                Storage::disk($disk)->delete($path);
+            }
+
+            return response()->json([
+                'message' => 'Prílohy sa nepodarilo uložiť.',
+                'error' => $e->getMessage(), // полезно для дебага
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        return response()->json([
+            'message' => 'Prílohy boli nahrané.',
+            'attachments' => $created,
+        ], Response::HTTP_CREATED);
+    }
+}

@@ -6,6 +6,7 @@ use App\Http\Controllers\NoteController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\AttachmentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,6 +14,7 @@ use App\Http\Controllers\CommentController;
 |--------------------------------------------------------------------------
 */
 Route::prefix('auth')->group(function () {
+
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login']);
 
@@ -24,6 +26,7 @@ Route::prefix('auth')->group(function () {
         Route::patch('/update-profile', [AuthController::class, 'updateProfile']);
 
         Route::post('/me/profile-photo', [AuthController::class, 'storeProfilePhoto']);
+        Route::delete('/me/profile-photo', [AuthController::class, 'destroyProfilePhoto']);
     });
 });
 /*
@@ -61,6 +64,7 @@ Route::middleware('auth:sanctum')->group(function () {
 |--------------------------------------------------------------------------
 */
 Route::middleware('auth:sanctum')->group(function () {
+
     // все авторизованные могут смотреть категории
     Route::apiResource('categories', CategoryController::class)->only(['index','show']);
     // только admin может менять категории
@@ -83,4 +87,13 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::patch('/comments/{comment}', [CommentController::class, 'update']);
     Route::delete('/comments/{comment}', [CommentController::class, 'destroy']);
+});
+/*
+|--------------------------------------------------------------------------
+| Attachment
+|--------------------------------------------------------------------------
+*/
+Route::middleware('auth:sanctum')->group(function () {
+
+    Route::post('/notes/{note}/attachments', [AttachmentController::class, 'store']);
 });
