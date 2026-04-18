@@ -7,6 +7,26 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
+## Images (Cvicenie 8) - Authorize
+
+```Task 2: CommentController```
+
+The method was tested in Postman:
+
+• POST /api/notes/1/comments - ```ADD COMM```
+
+• GET /api/notes/1/comments - ```CHECK ALL COMM```
+
+• PATCH /api/comments/5 - ```UPDATE COMM (USER vs ADMIN)```
+
+• DELETE /api/comments/5 - ```DELETE COMM```
+
+![1.png](images/comments/1.png)
+![2.png](images/comments/2.png)
+![3.png](images/comments/3.png)
+![4.png](images/comments/4.png)
+![5.png](images/comments/5.png)
+
 ## Images (Cvicenie 7) - Sanctum
 
 ```Task 1: AuthController Test```

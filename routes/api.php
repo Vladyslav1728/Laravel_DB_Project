@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\NoteController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\CommentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -64,4 +65,20 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::middleware('admin')->group(function () {
         Route::apiResource('categories', CategoryController::class)->except(['index','show']);
     });
+});
+/*
+|--------------------------------------------------------------------------
+| COMMENTS
+|--------------------------------------------------------------------------
+*/
+Route::middleware('auth:sanctum')->group(function () {
+
+    Route::get('/notes/{note}/comments', [CommentController::class, 'noteComments']);
+    Route::post('/notes/{note}/comments', [CommentController::class, 'storeForNote']);
+
+    Route::get('/tasks/{task}/comments', [CommentController::class, 'taskComments']);
+    Route::post('/tasks/{task}/comments', [CommentController::class, 'storeForTask']);
+
+    Route::patch('/comments/{comment}', [CommentController::class, 'update']);
+    Route::delete('/comments/{comment}', [CommentController::class, 'destroy']);
 });
