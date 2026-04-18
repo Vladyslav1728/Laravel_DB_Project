@@ -22,16 +22,20 @@
 The method was tested in Postman:
 
 • POST /api/notes/1/comments - ```ADD COMM```
+
 ![1.png](images/comments/1.png)
 
 • GET /api/notes/1/comments - ```CHECK ALL COMM```
+
 ![2.png](images/comments/2.png)
 
 • PATCH /api/comments/5 - ```UPDATE COMM (USER vs ADMIN)```
+
 ![3.png](images/comments/3.png)
 ![4.png](images/comments/4.png)
 
 • DELETE /api/comments/5 - ```DELETE COMM```
+
 ![5.png](images/comments/5.png)
 
 ---
@@ -41,15 +45,19 @@ The method was tested in Postman:
 The method was tested in Postman:
 
 • POST /api/auth/me/profile-photo - ```ADD PHOTO```
+
 ![1.png](images/upload_files/1.png)
 
 • POST /api/notes/{note}/attachments - ```ADD FILES```
+
 ![2.png](images/upload_files/2.png)
 
 • GET /api/notes/{note}/attachments - ```CHECK FILES```
+
 ![3.png](images/upload_files/3.png)
 
 • GET /api/attachments/{note}/link - ```GET A TEMPORARY LINK```
+
 ![4.png](images/upload_files/4.png)
 
 ---
