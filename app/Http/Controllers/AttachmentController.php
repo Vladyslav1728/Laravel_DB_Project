@@ -14,6 +14,18 @@ use Throwable;
 
 class AttachmentController extends Controller
 {
+    public function index(Note $note)
+    {
+
+        $attachments = $note->attachments()
+            ->latest()
+            ->get();
+
+        return response()->json([
+            'attachments' => $attachments,
+        ], Response::HTTP_OK);
+    }
+
     public function store(Request $request, Note $note)
     {
         $validated = $request->validate([
@@ -72,5 +84,18 @@ class AttachmentController extends Controller
             'message' => 'Prílohy boli nahrané.',
             'attachments' => $created,
         ], Response::HTTP_CREATED);
+    }
+
+    public function link(Attachment $attachment)
+    {
+
+        $expiresAt = now()->addSeconds(30);
+
+        $url = Storage::disk($attachment->disk)->temporaryUrl($attachment->path, $expiresAt);
+
+        return response()->json([
+            'url' => $url,
+            'expires_at' => $expiresAt->toIso8601String(),
+        ], Response::HTTP_OK);
     }
 }

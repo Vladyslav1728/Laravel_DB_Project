@@ -95,5 +95,10 @@ Route::middleware('auth:sanctum')->group(function () {
 */
 Route::middleware('auth:sanctum')->group(function () {
 
+    // list of note files
+    Route::get('/notes/{note}/attachments', [AttachmentController::class, 'index']);
+    // uploading files
     Route::post('/notes/{note}/attachments', [AttachmentController::class, 'store']);
+    // temporary link to a file
+    Route::get('/attachments/{attachment}/link', [AttachmentController::class, 'link']);
 });

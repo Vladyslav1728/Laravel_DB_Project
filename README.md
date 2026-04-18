@@ -7,40 +7,52 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
+---
+
 ## Images (Cvicenie 8) - Authorize
 
 ```Task 1: Note and Task authorize```
 
 --
 
+---
+
 ```Task 2: CommentController```
 
 The method was tested in Postman:
 
 • POST /api/notes/1/comments - ```ADD COMM```
+![1.png](images/comments/1.png)
 
 • GET /api/notes/1/comments - ```CHECK ALL COMM```
+![2.png](images/comments/2.png)
 
 • PATCH /api/comments/5 - ```UPDATE COMM (USER vs ADMIN)```
-
-• DELETE /api/comments/5 - ```DELETE COMM```
-
-![1.png](images/comments/1.png)
-![2.png](images/comments/2.png)
 ![3.png](images/comments/3.png)
 ![4.png](images/comments/4.png)
+
+• DELETE /api/comments/5 - ```DELETE COMM```
 ![5.png](images/comments/5.png)
+
+---
 
 ```Task 3: AuthController - Photo / Files / Links```
 
 The method was tested in Postman:
 
 • POST /api/auth/me/profile-photo - ```ADD PHOTO```
+![1.png](images/upload_files/1.png)
 
 • POST /api/notes/{note}/attachments - ```ADD FILES```
-
-![1.png](images/upload_files/1.png)
 ![2.png](images/upload_files/2.png)
+
+• GET /api/notes/{note}/attachments - ```CHECK FILES```
+![3.png](images/upload_files/3.png)
+
+• GET /api/attachments/{note}/link - ```GET A TEMPORARY LINK```
+![4.png](images/upload_files/4.png)
+
+---
 
 ## Images (Cvicenie 7) - Sanctum
 
@@ -61,6 +73,8 @@ The method was tested in Postman:
 ![3.png](images/auth/3.png)
 ![4.png](images/auth/4.png)
 
+---
+
 ```Task 2: AuthController Test - New methods```
 
 The method was tested in Postman:
@@ -75,12 +89,16 @@ The method was tested in Postman:
 ![6.png](images/auth/6.png)
 ![7.png](images/auth/7.png)
 
+---
+
 ```Task 3: Middleware - For Admin```
 
 Here I showed that after I changed my role to a regular ```User```, I ```can't delete the category```.
 
 ![8.png](images/auth/8.png)
 ![9.png](images/auth/9.png)
+
+---
 
 ## Images (Cvicenie 6) - Connections and Factories
 
@@ -94,6 +112,8 @@ The method was tested in Postman:
 
 ![1-404.png](images/note_methods/1-404.png)
 ![2-404.png](images/note_methods/2-404.png)
+
+---
 
 ```Task 2: CategoryController CRUD```
 
@@ -109,6 +129,8 @@ The method was tested in Postman:
 ![6.2.png](images/categories_crud/6.2.png)
 ![6.3.png](images/categories_crud/6.3.png)
 
+---
+
 ```Task 3: TaskController CRUD```
 
 The method was tested in Postman:
@@ -123,6 +145,8 @@ The method was tested in Postman:
 ![2.png](images/tasks_crud/2.png)
 ![3.png](images/tasks_crud/3.png)
 
+---
+
 ## Images (Cvicenie 5) - Eloquent ORM / QB
 
 New methods are created that are then used in the NoteController:
@@ -134,6 +158,8 @@ New methods are created that are then used in the NoteController:
 ![3.png](images/note_methods/3.png)
 ![4.png](images/note_methods/4.png)
 ![5.png](images/note_methods/5.png)
+
+---
 
 ## Images (Cvicenie 4)
 
