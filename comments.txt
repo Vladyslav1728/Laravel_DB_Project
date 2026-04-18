@@ -29,4 +29,7 @@ php artisan make:controller NameController --api
 --- MODEL ---
 php artisan make:model Name -m
 
+--- POLICIES ---
+php artisan make:policy NotePolicy --model=Note
+
 */
