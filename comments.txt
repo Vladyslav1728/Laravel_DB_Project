@@ -32,4 +32,11 @@ php artisan make:model Name -m
 --- POLICIES ---
 php artisan make:policy NotePolicy --model=Note
 
+--- LISTENER ---
+php artisan make:listener NAME --event=Registered
+
+--- MAIL ---
+php artisan make:mail WelcomeMail
+
+PASSWORD MAIL: jamo sypa vccy qknh
 */

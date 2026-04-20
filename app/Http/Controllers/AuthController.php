@@ -16,6 +16,7 @@ use Throwable;
 
 class AuthController extends Controller
 {
+    /* -------- OLD ------------
     public function register(Request $request)
     {
         $validated = $request->validate([
@@ -41,6 +42,32 @@ class AuthController extends Controller
             'message' => 'Registrácia prebehla úspešne.',
             'user'    => $user,
             'token'   => $token,
+        ], Response::HTTP_CREATED);
+    }
+    */
+    public function register(Request $request)
+    {
+        $validated = $request->validate([
+            'name'  => ['required', 'string', 'min:2', 'max:128'],
+            'email'      => ['required', 'email', 'max:255', 'unique:users,email'],
+            'password'   => ['required', 'confirmed', Password::min(12)->letters()->mixedCase()->numbers()->symbols()],
+        ]);
+
+        $user = User::create([
+            'name' => $validated['name'],
+            'email'      => $validated['email'],
+            'password'   => $validated['password'], // cast zahashuje heslo
+            'role'       => 'user',
+        ]);
+
+        event(new Registered($user));
+
+        $token = $user->createToken('auth-token')->plainTextToken;
+
+        return response()->json([
+            'message' => 'Registrácia prebehla úspešne.',
+            'user' => $user,
+            'token' => $token,
         ], Response::HTTP_CREATED);
     }
     public function login(Request $request)
