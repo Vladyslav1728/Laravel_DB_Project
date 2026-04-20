@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\File;
 use Throwable;
+use Illuminate\Auth\Events\Registered;
 
 class AuthController extends Controller
 {
